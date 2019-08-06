@@ -6,12 +6,14 @@
     </div>
 </template>
 <script>
+import {mapActions} from 'vuex'
 import {ebookMixin} from '../../utils/mixin'
 import Epub from 'epubjs'
 global.ePub = Epub
 export default {
   mixins: [ebookMixin],
   methods: {
+  ...mapActions(['setMenuVisible'])
   // 上一页
   prevPage () {
     if (this.rendition) {
@@ -27,10 +29,10 @@ export default {
   }
   },
   toggleTitleAndMenu () {
-     this.$store.dispatch('setMenuVisible', !this.menuVisible)
+      this.setMenuVisible(!this.menuVisible)
   },
   hideTitleAndMenu () {
-     this.$store.dispatch('setMenuVisible', false)
+     this.setMenuVisible(false)
   },
     initEpub () {
     // 通过nginx服务器来获取电子书路径 
