@@ -24,6 +24,7 @@ export default {
 }
 </script>
 <style lang="scss" scoped>
+@import "../../assets/styles/global"
 .title-wrapper {
     position: absolute;
     top: 0;
