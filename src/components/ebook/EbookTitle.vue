@@ -19,7 +19,11 @@
     </transition>
 </template>
 <script>
+import {mapGetters} from 'vuex'
 export default {
+  mounted: {
+     ...mapGetters(['menuVisible'])
+  },
    methods: {
        back () {
        
