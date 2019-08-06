@@ -53,7 +53,7 @@ export default {
       justify-content: flex-end;
       .icon-wrapper {
         flex: 0 0 px2rem(40);
-        @include center;
+        @include left;
         .icon-shelf {
           font-size: px2rem(22);
         }
