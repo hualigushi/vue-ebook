@@ -6,13 +6,11 @@
     </div>
 </template>
 <script>
-import { mapGetters } from 'vuex'
+import {ebookMixin} from '../../utils/mixin'
 import Epub from 'epubjs'
 global.ePub = Epub
 export default {
-  computed: {
-    ...mapGetters(['fileName', 'menuVisible'])
-  },
+  mixins: [ebookMixin],
   methods: {
   // 上一页
   prevPage () {
