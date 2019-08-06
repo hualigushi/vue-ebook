@@ -11,7 +11,7 @@ import Epub from 'epubjs'
 global.ePub = Epub
 export default {
   computed: {
-    ...mapGetters(['fileName'])
+    ...mapGetters(['fileName', 'menuVisible'])
   },
   methods: {
   // 上一页
@@ -27,7 +27,7 @@ export default {
   }
   },
   toggleTitleAndMenu () {
-  
+     this.$store.dispatch('setMenuVisible', !this.menuVisible)
   },
     initEpub () {
     // 通过nginx服务器来获取电子书路径 
