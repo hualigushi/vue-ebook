@@ -30,12 +30,15 @@ export default {
   toggleTitleAndMenu () {
       if (this.menuVisible) {
          this.setSetttingVisible(-1)
+         this.setFontFamiyVisible(false)
       }
       this.setMenuVisible(!this.menuVisible)
+      
   },
   hideTitleAndMenu () {
      this.setMenuVisible(false)
      this.setSettingVisible(-1)
+     this.setFontFamiyVisible(false)
   },
     initEpub () {
     // 通过nginx服务器来获取电子书路径 
@@ -70,6 +73,10 @@ export default {
        event.preventDefault() //禁止默认事件
        event.stopPropagation() // 禁止传播事件
       })
+      // 阅读器渲染完成可以获取资源文件时，注册方法
+      this.rendition.hooks.content.register(contents => {
+         contents.addStylesheet('../../assets/fonts/daysOne.css') // 手动添加样式文件
+      
     }
   },
   mounted () {
