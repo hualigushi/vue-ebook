@@ -28,10 +28,14 @@ export default {
   }
   },
   toggleTitleAndMenu () {
+      if (this.menuVisible) {
+         this.setSetttingVisible(-1)
+      }
       this.setMenuVisible(!this.menuVisible)
   },
   hideTitleAndMenu () {
      this.setMenuVisible(false)
+     this.setSettingVisible(-1)
   },
     initEpub () {
     // 通过nginx服务器来获取电子书路径 
