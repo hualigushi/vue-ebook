@@ -18,16 +18,21 @@ export default {
   prevPage () {
     if (this.rendition) {
       this.rendition.prev()
+      this.hideTitleAndMenu()
     }
   },
   // 下一页
   nextPage() {
   if(this.rendition) {
       this.rendition.next()
+      this.hideTitleAndMenu()
   }
   },
   toggleTitleAndMenu () {
      this.$store.dispatch('setMenuVisible', !this.menuVisible)
+  },
+  hideTitleAndMenu () {
+     this.$store.dispatch('setMenuVisible', false)
   },
     initEpub () {
     // 通过nginx服务器来获取电子书路径 
