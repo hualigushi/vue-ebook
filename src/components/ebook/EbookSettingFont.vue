@@ -43,7 +43,7 @@ export default{
         this.currentBook.rendition.themes.fontSize(fontSize)
      },
      showFontFamilyPopup () {
-     
+        this.setFontFamilyVisivle(true)
      }
   }
 }
