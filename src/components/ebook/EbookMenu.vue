@@ -11,7 +11,7 @@
           <span class="icon-bright" @click="showSetting(1)"></span>
         </div>
         <div class="icon-wrapper">
-          <span class="icon-a" @click="showSetting(0)">A</span>
+          <span class="icon-A" @click="showSetting(0)"></span>
         </div>
       </div>
     </transition>
@@ -41,6 +41,7 @@ export default {
     height: px2rem(48);
     background: white;
     box-shadow: 0 px2rem(-8) px2rem(8) rgba(0, 0, 0, .15);
+    font-size: px2rem(20);
     &.hide-box-shadow {
       box-shadow: none;
     }
@@ -48,10 +49,10 @@ export default {
       flex: 1;
       @include center;
       .icon-progress {
-        font-size: px2rem(28);
+        font-size: px2rem(24);
       }
       .icon-bright {
-        font-size: px2rem(24);
+        font-size: px2rem(22);
       }
     }
   }
