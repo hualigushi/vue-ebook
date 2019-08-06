@@ -2,7 +2,7 @@
 <transition name="slide-down">
       <div class="title-wrapper">
         <div class="left">
-          <span class="icon-back"></span>
+          <span class="icon-back" @click=""back" v-show="menuVisible"></span>
         </div>
         <div class="right">
           <div class="icon-wrapper">
@@ -20,7 +20,11 @@
 </template>
 <script>
 export default {
-
+   methods: {
+       back () {
+       
+       }
+   }
 }
 </script>
 <style lang="scss" scoped>
@@ -35,9 +39,11 @@ export default {
     height: px2rem(48);
     background: white;
     box-shadow: 0 px2rem(8) px2rem(8) rgba(0, 0, 0, .15);
+    font-size: px2rem(20);
     .left {
       flex: 0 0 px2rem(60);
       @include center;
+      margin-left: px2rem(15);
     }
     .right {
       flex: 1;
@@ -46,6 +52,9 @@ export default {
       .icon-wrapper {
         flex: 0 0 px2rem(40);
         @include center;
+        .icon-shelf {
+          font-size: px2rem(22);
+        }
         .icon-cart {
           font-size: px2rem(22);
         }
