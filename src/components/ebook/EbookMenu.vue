@@ -17,11 +17,9 @@
     </transition>
 <template>
 <script>
-import {mapGetters} from 'vuex'
+import {ebookMixin} from '../../utils/mixin'
 export default {
-    computed: {
-        ...mapGetters(['menuVisible'])
-    },
+    mixins: [ebookMixin],
     methods: {
         showSetting (key) {
     
