@@ -1,72 +1,76 @@
 <template>
- <transition name="popup-slide-up">
-   <div class="ebook-popup-list" v-show="fontFamilyVisible">
-     <div class="ebook-popup-title">
-        <div class="ebook-popup-icon" @click="hide">
-          <span class="icon-down2"></span>
-        </div>
-        <span class="ebook-popup-title-text">选择字体</span>
-     </div>
-     <div class="ebook-popup-list-wrapper">
-        <div class="ebook-popup-item" v-for="(item, index) in fontFamilyList" :key="index" @click="setFontFamily(item.font)">
-           <div class="ebook-popup-item-text" :class="{'selected': isSelected(item)}">{{item.font}}</div>
-           <div class="ebook-popup-item-check" v-if="isSelected(item)">
-               <span class="icon-check"></span>
-           </div>
-        </div>
-     </div>
+  <transition name="popup-slide-up">
+    <div class="ebook-popup-list" v-show="fontFamilyVisible">
+      <div class="ebook-popup-title">
+          <div class="ebook-popup-title-icon" @click="hide">
+            <span class="icon-down2"></span>
+          </div>
+          <span class="ebook-popup-title-text">选择字体</span>
+      </div>
+      <div class="ebook-popup-list-wrapper">
+          <div class="ebook-popup-item" v-for="(item, index) in fontFamilyList" :key="index" @click="setFontFamily(item.font)">
+            <div class="ebook-popup-item-text" :class="{'selected': isSelected(item)}">{{item.font}}</div>
+            <div class="ebook-popup-item-check" v-if="isSelected(item)">
+                <span class="icon-check"></span>
+            </div>
+          </div>
+      </div>
    </div>
   </transition>
 </template>
 <script>
-import {ebookMixin} from '../../utils/mixin'
-import {FONT_FAMILY} from '../../utls/book'
+import { ebookMixin } from '../../utils/mixin'
+import { FONT_FAMILY } from '../../utils/book'
 export default {
-   mixins: [ebookMixin],
-   data () {
-     return {
-        fontFamilyLIst: FONT_FAMILY
-     }
-   },
-   methods: {
-      hide () {
-         this.setFontFamiyVisible(false)
-      },
-      isSelected(item) {
-         return this.defaultFontFamily ===item.font
-      },
-      setFontFamily (font) {
-         this.setDefaultFontFamily(font)
-         this.currentBook.rendition.themes.font(font)
-      }
-   }
+  mixins: [ebookMixin],
+  data () {
+    return {
+      fontFamilyList: FONT_FAMILY
+    }
+  },
+  methods: {
+    hide () {
+      this.setFontFamilyVisible(false)
+    },
+    isSelected (item) {
+      return this.defaultFontFamily === item.font
+    },
+    setFontFamily (font) {
+      this.setDefaultFontFamily(font)
+      this.currentBook.rendition.themes.font(font)
+    }
+  }
 }
 </script>
 <style lang="scss" scoped>
-@import "../../assets/styles/global"
+@import "../../assets/styles/global";
 .ebook-popup-list {
     position: absolute;
     bottom:0;
     left:0;
-    z-index: 300;
+    z-index: 350;
     width: 100%;
+    font-size: 0;
     background: white;
     box-shadow: 0 px2rem(-4) px2rem(6) rgbs(0,0,0,.1);
-    text-align: center;
-    @include center;
    .ebook-popup-title {
        position: relative;
        padding:px2rem(15);
        box-sizing: border-box;
        border-bottom: px2rem(1) solid #b8b9bb;
-      .ebook-popup-icon{
+       text-align: center;
+      @include center;
+      .ebook-popup-title-icon{
          position: absolute;
          left: px2rem(15);
-         font-weight: bold;
          top: 0;
          height: 100%;
          font-size: px2rem(16);
          @include center;
+         .icon-down2 {
+          font-size: px2rem(16);
+          font-weight: bold;
+        }
       }
       .ebook-popup-title-text{
          font-size: px2rem(14);
@@ -74,9 +78,9 @@ export default {
       }
    }
    .ebook-popup-list-wrapper{
-      display: flex;
-      padding: px2rem(15);
       .ebook-popup-item {
+        display: flex;
+        padding: px2rem(15);
          .ebook-popup-item-text {
             flex:1;
             font-size: px2rem(14);
@@ -88,11 +92,12 @@ export default {
          }
          .ebook-popup-item-check {
             flex:1;
-            font-size: px2rem(14);
             text-align: right;
-            font-weight: bold;
-            color: #346cb9;
-            
+            .icon-check {
+              font-size: px2rem(14);
+              font-weight: bold;
+              color: #346cb9;
+            }
          }
       }
     }

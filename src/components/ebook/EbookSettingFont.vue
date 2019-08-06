@@ -1,5 +1,5 @@
 <template>
-<transition name="slide-up">
+  <transition name="slide-up">
     <div class="setting-wrapper" v-show="menuVisible && settingVisible === 0">
       <div class="setting-font-size">
         <div class="preview" :style="{fontSize: fontSizeList[0].fontSize + 'px'}">A</div>
@@ -17,39 +17,39 @@
         <div class="preview" :style="{fontSize: fontSizeList[fontSizeList.length - 1].fontSize + 'px'}">A</div>
       </div>
       <div class="setting-font-family" @click="showFontFamilyPopup">
-         <div class="setting-font-family-text-wrapper">
+        <div class="setting-font-family-text-wrapper">
             <span class="setting-font-family-text">{{defaultFontFamily}}</span>
-         </div>
-         <div class="setting-fint-family-icon-wrapper">
+        </div>
+        <div class="setting-fint-family-icon-wrapper">
             <span class="icon-forward"></span>
-         </div>
+        </div>
       </div>
     </div>
- </transition>
+  </transition>
 </template>
 <script>
-import { FONT_SIZE_LIST} from '../../utils/book'
-import {ebookMixin} from '../../utils/mixin'
-export default{
+import { FONT_SIZE_LIST } from '../../utils/book'
+import { ebookMixin } from '../../utils/mixin'
+export default {
   mixins: [ebookMixin],
   data () {
-     return {
-        fontSizeList: FONT_SIZE_LIST
-     }
+    return {
+      fontSizeList: FONT_SIZE_LIST
+    }
   },
   methods: {
-     setFontSize (fontSize) {
-         this.setDefaultFontSize(fontSize)
-        this.currentBook.rendition.themes.fontSize(fontSize)
-     },
-     showFontFamilyPopup () {
-        this.setFontFamilyVisivle(true)
-     }
+    setFontSize (fontSize) {
+      this.setDefaultFontSize(fontSize)
+      this.currentBook.rendition.themes.fontSize(fontSize)
+    },
+    showFontFamilyPopup () {
+      this.setFontFamilyVisible(true)
+    }
   }
 }
 </script>
 <style lang="scss" scoped>
-@import "../../assets/styles/global"
+@import "../../assets/styles/global";
   .setting-wrapper {
     position: absolute;
     bottom: px2rem(48);

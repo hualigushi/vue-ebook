@@ -1,36 +1,36 @@
 <template>
-<transition name="slide-down">
-      <div class="title-wrapper">
-        <div class="left">
-          <span class="icon-back" @click=""back" v-show="menuVisible"></span>
+  <transition name="slide-down">
+    <div class="title-wrapper" v-show="menuVisible">
+      <div class="left" @click="back">
+        <span class="icon-back"></span>
+      </div>
+      <div class="right">
+        <div class="icon-wrapper">
+          <span class="icon-shelf"></span>
         </div>
-        <div class="right">
-          <div class="icon-wrapper">
-            <span class="icon-shelf"></span>
-          </div>
-          <div class="icon-wrapper">
-            <span class="icon-cart"></span>
-          </div>
-          <div class="icon-wrapper">
-            <span class="icon-more"></span>
-          </div>
+        <div class="icon-wrapper">
+          <span class="icon-cart"></span>
+        </div>
+        <div class="icon-wrapper">
+          <span class="icon-more"></span>
         </div>
       </div>
-    </transition>
+    </div>
+  </transition>
 </template>
 <script>
-import {ebookMixin} from '../../utils/mixin'
+import { ebookMixin } from '../../utils/mixin'
 export default {
-   mixins: [ebookMixin],
-   methods: {
-       back () {
-       
-       }
-   }
+  mixins: [ebookMixin],
+  methods: {
+    back () {
+
+    }
+  }
 }
 </script>
 <style lang="scss" scoped>
-@import "../../assets/styles/global"
+@import "../../assets/styles/global";
 .title-wrapper {
     position: absolute;
     top: 0;
