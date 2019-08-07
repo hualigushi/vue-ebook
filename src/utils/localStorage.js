@@ -115,17 +115,18 @@ export function saveFontSize (fileName, fontSize) {
 }
 
 export function getBookObject (fileName, key) {
-  if (getLocalStorage(`${fileName}-info`)) {
-    return getLocalStorage(`${fileName}-info`)[key]
+  let book = getLocalStorage(`${fileName}-info`)
+  if (book) {
+    return book[key]
   } else {
     return null
   }
 }
 
 export function setBookObject (fileName, key, value) {
-  let book = {}
-  if (getLocalStorage(`${fileName}-info`)) {
-    book = getLocalStorage(`${fileName}-info`)
+  let book = getLocalStorage(`${fileName}-info`)
+  if (!book) {
+    book = {}
   }
   book[key] = value
   setLocalStorage(`${fileName}-info`, book)
