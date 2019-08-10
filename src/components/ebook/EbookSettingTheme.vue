@@ -17,12 +17,17 @@
 </template>
 <script>
 import { ebookMixin } from '@/utils/mixin'
+import { saveTheme } from '../../utils/localStorage'
 export default {
   mixins: [ebookMixin],
   methods: {
     setTheme (index) {
       const theme = this.themeList[index]
-      this.setDefaultTheme(theme.name)
+      this.setDefaultTheme(theme.name).then(() => {
+        this.currentBook.rendition.themes.select(this.defaultTheme)
+        this.initGlobalStyle()
+      })
+      saveTheme(this.fileName, theme.name)
     }
   }
 }

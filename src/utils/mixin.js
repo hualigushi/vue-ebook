@@ -34,8 +34,8 @@ export const ebookMixin = {
       if (this.section) {
         const section = this.currentBook.section(this.section)
         if (section && section.href && this.currentBook && this.currentBook.navigation) {
-          // return this.currentBook.navigation.get(section.href).label
-          return this.navigation[this.section].label
+          return this.currentBook.navigation.get(section.href).label
+          // return this.navigation[this.section].label
         }
       }
     }
@@ -69,6 +69,26 @@ export const ebookMixin = {
       'setIsBookmark',
       'setSpeakingIconBottom'
     ]),
+    initGlobalStyle () {
+      removeAllCss()
+      switch (this.defaultTheme) {
+        case 'Default':
+          addCss(`${process.env.VUE_APP_RES_URL}/theme/theme_default.css`)
+          break
+        case 'Eye':
+          addCss(`${process.env.VUE_APP_RES_URL}/theme/theme_eye.css`)
+          break
+        case 'Gold':
+          addCss(`${process.env.VUE_APP_RES_URL}/theme/theme_gold.css`)
+          break
+        case 'Night':
+          addCss(`${process.env.VUE_APP_RES_URL}/theme/theme_night.css`)
+          break
+        default:
+          addCss(`${process.env.VUE_APP_RES_URL}/theme/theme_default.css`)
+          break
+      }
+    },
     showFontFamilySetting () {
       this.setFontFamilyVisible(true)
     },
@@ -156,12 +176,13 @@ export const ebookMixin = {
       }
     },
     displayProgress () {
+      console.log(this.progress)
       const cfi = this.currentBook.locations.cfiFromPercentage(this.progress / 100)
       this.currentBook.rendition.display(cfi).then(() => {
         this.refreshLocation()
       })
     },
-    display (target, highlight = false) {
+    display (target, highlight = false, cb) {
       if (target) {
         this.currentBook.rendition.display(target).then(() => {
           if (highlight) {
@@ -173,10 +194,16 @@ export const ebookMixin = {
             }
           }
           this.refreshLocation()
+          if (cb) {
+            cb()
+          }
         })
       } else {
         this.currentBook.rendition.display().then(() => {
           this.refreshLocation()
+          if (cb) {
+            cb()
+          }
         })
       }
       this.hideMenuVisible()
