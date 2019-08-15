@@ -1,7 +1,7 @@
 <template>
   <div class="ebook-reader">
     <div id="read">
-
+    <div class="ebook-reader-mask" @click="onMaskClick"></div>
     </div>
   </div>
 </template>
@@ -21,6 +21,17 @@ global.ePub = Epub
 export default {
   mixins: [ebookMixin],
   methods: {
+    onMaskClick (e) {
+      const offsetX = e.offsetX
+      const width = window.innerWidth
+      if (offsetX > 0 && offsetX < width * 0.3) {
+        this.prevPage()
+      } else if (offsetX > 0 && offsetX > width * 0.7) {
+        this.nextPage()
+      } else {
+        this.toggleTitleAndMenu()
+      }
+    },
     // 上一页
     prevPage () {
       if (this.rendition) {
@@ -160,14 +171,14 @@ export default {
       })
     },
     initEpub () {
-    // 通过nginx服务器来获取电子书路径
+      // 通过nginx服务器来获取电子书路径
       const url = `${process.env.VUE_APP_RES_URL}/epub/` + this.fileName + '.epub'
       console.log(url)
       this.book = new Epub(url)
       console.log(this.book)
       this.setCurrentBook(this.book)
       this.initRedition()
-      this.initGesture()
+      // this.initGesture()
       this.parseBook()
       this.book.ready.then(() => {
         return this.book.locations.generate(750 * (window.innerWidth / 375) * (getFontSize(this.fileName) / 16))
@@ -184,6 +195,21 @@ export default {
   }
 }
 </script>
-<style lang="sass" scoped>
+<style lang="scss" rel="stylesheet/scss" scoped>
+  @import "../../assets/styles/global";
 
+  .ebook-reader{
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    .ebook-reader-mask{
+      position: absolute;
+      z-index: 150;
+      top:0;
+      left:0;
+      background: transparent;
+      width: 100%;
+      height: 100%;
+    }
+  }
 </style>
