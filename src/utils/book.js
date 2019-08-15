@@ -363,3 +363,8 @@ export function reset (vue) {
   vue.$store.dispatch('setFontFamilyVisible', false)
   vue.$store.dispatch('setSpeakingIconBottom', realPx(58))
 }
+
+// 树状嵌套数组转化成一维数组
+export function flatten (array) {
+  return [].concat(...array.map(item => [].concat(item, ...flatten(item.subitems))))
+}

@@ -1,6 +1,5 @@
 import { mapGetters, mapActions } from 'vuex'
-import { FONT_SIZE_LIST, FONT_FAMILY, themeList, getReadTimeByMinute, showBookDetail } from './book'
-import { addCss, removeAllCss } from './utils'
+import { FONT_SIZE_LIST, FONT_FAMILY, themeList, getReadTimeByMinute, showBookDetail, addCss, removeAllCss } from './book'
 import * as Storage from './localStorage'
 
 export const ebookMixin = {
@@ -31,13 +30,14 @@ export const ebookMixin = {
       return themeList(this)
     },
     getSectionName () {
-      if (this.section) {
-        const section = this.currentBook.section(this.section)
-        if (section && section.href && this.currentBook && this.currentBook.navigation) {
-          return this.currentBook.navigation.get(section.href).label
-          // return this.navigation[this.section].label
-        }
-      }
+      // if (this.section) {
+      //   const section = this.currentBook.section(this.section)
+      //   if (section && section.href && this.currentBook && this.currentBook.navigation) {
+      //     return this.currentBook.navigation.get(section.href).label
+      //   }
+      // }
+
+      return this.section ? this.navigation[this.section].label : ''
     }
   },
   data () {
@@ -94,11 +94,6 @@ export const ebookMixin = {
     },
     showSetting (key) {
       this.setSettingVisible(key)
-    },
-    hideMenuVisible () {
-      this.setMenuVisible(false)
-      this.setSettingVisible(-1)
-      this.setFontFamilyVisible(false)
     },
     toggleMenuVisible () {
       if (this.menuVisible) {
@@ -206,7 +201,6 @@ export const ebookMixin = {
           }
         })
       }
-      this.hideMenuVisible()
     },
     refreshLocation () {
       const currentLocation = this.currentBook.rendition.currentLocation()
@@ -239,6 +233,11 @@ export const ebookMixin = {
     },
     getReadTime () {
       return this.$t('book.haveRead').replace('$1', getReadTimeByMinute(this.fileName))
+    },
+    hideTitleAndMenu () {
+      this.setMenuVisible(false)
+      this.setSettingVisible(-1)
+      this.setFontFamilyVisible(false)
     }
   }
 }

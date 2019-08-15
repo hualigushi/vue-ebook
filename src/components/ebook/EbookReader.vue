@@ -7,6 +7,7 @@
 </template>
 <script>
 import { ebookMixin } from '../../utils/mixin'
+import { flatten } from '../../utils/book'
 import Epub from 'epubjs'
 import { getFontSize,
   saveFontSize,
@@ -44,11 +45,6 @@ export default {
         this.setFontFamilyVisible(false)
       }
       this.setMenuVisible(!this.menuVisible)
-    },
-    hideTitleAndMenu () {
-      this.setMenuVisible(false)
-      this.setSettingVisible(-1)
-      this.setFontFamilyVisible(false)
     },
     initTheme () {
       let defaultTheme = getTheme(this.fileName)
@@ -110,7 +106,6 @@ export default {
     initGesture () {
       // 绑定事件到iframe
       this.rendition.on('touchstart', event => {
-        console.log(event)
         this.touchStartX = event.changedTouches[0].clientX
         this.touchStartTime = event.timeStamp
       })
@@ -129,6 +124,41 @@ export default {
         event.stopPropagation() // 禁止传播事件
       })
     },
+    parseBook () { // 解析电子书，
+      // 获取封面图片链接
+      this.book.loaded.cover.then(cover => {
+        this.book.archive.createUrl(cover).then(url => {
+          console.log(url)
+          this.setCover(url)
+        })
+      })
+      // 获取标题和作者
+      this.book.loaded.metadata.then(metadata => {
+        console.log(metadata)
+        this.setMetadata(metadata)
+      })
+      // 获取目录
+      this.book.loaded.navigation.then(nav => {
+        console.log(nav)
+        const navItem = flatten(nav.toc)
+        function find (item, v = 0) {
+          const parent = navItem.filter(it => it.id === item.parent)[0]
+          return !item.parent ? v : (parent ? find(parent, ++v) : v)
+        }
+
+        navItem.forEach(item => {
+          item.level = find(item)
+          item.total = 0
+          item.pagelist = []
+          if (item.href.match(/^(.*)\.html$/)) {
+            item.idhref = item.href.match(/^(.*)\.html$/)[1]
+          } else if (item.href.match(/^(.*)\.xhtml$/)) {
+            item.idhref = item.href.match(/^(.*)\.xhtml$/)[1]
+          }
+        })
+        this.setNavigation(navItem)
+      })
+    },
     initEpub () {
     // 通过nginx服务器来获取电子书路径
       const url = `${process.env.VUE_APP_RES_URL}/epub/` + this.fileName + '.epub'
@@ -138,6 +168,7 @@ export default {
       this.setCurrentBook(this.book)
       this.initRedition()
       this.initGesture()
+      this.parseBook()
       this.book.ready.then(() => {
         return this.book.locations.generate(750 * (window.innerWidth / 375) * (getFontSize(this.fileName) / 16))
       }).then(locations => {
