@@ -1,7 +1,7 @@
 <template>
   <div class="ebook-reader">
     <div id="read">
-    <div class="ebook-reader-mask" @click="onMaskClick"></div>
+    <div class="ebook-reader-mask" @click="onMaskClick" @touchmove="move" @touchend="moveEnd"></div>
     </div>
   </div>
 </template>
@@ -21,6 +21,18 @@ global.ePub = Epub
 export default {
   mixins: [ebookMixin],
   methods: {
+    move (e) {
+     let offsetY = 0
+if (this.firstOffsetY) {
+  offsetY = e.changedTouches[0].clientY - this.firstOffsetY
+  this.setOffsetY(offsetY)
+} else {
+this.firstOffsetY=e.changedTouches[0].clientY
+}
+    },
+    moveEnd(e) {
+       
+    },
     onMaskClick (e) {
       const offsetX = e.offsetX
       const width = window.innerWidth
