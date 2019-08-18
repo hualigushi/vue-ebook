@@ -22,16 +22,20 @@ export default {
   mixins: [ebookMixin],
   methods: {
     move (e) {
-     let offsetY = 0
-if (this.firstOffsetY) {
-  offsetY = e.changedTouches[0].clientY - this.firstOffsetY
-  this.setOffsetY(offsetY)
-} else {
-this.firstOffsetY=e.changedTouches[0].clientY
-}
+      let offsetY = 0
+      if (this.firstOffsetY) {
+        offsetY = e.changedTouches[0].clientY - this.firstOffsetY
+        this.setOffsetY(offsetY)
+      } else {
+        this.firstOffsetY = e.changedTouches[0].clientY
+      }
+      // 阻止事件传播
+      e.preventDefault()
+      e.stopPropagation()
     },
-    moveEnd(e) {
-       
+    moveEnd (e) {
+      this.setOffsetY(0) // 还原偏移量
+      this.firstOffsetY = null
     },
     onMaskClick (e) {
       const offsetX = e.offsetX
