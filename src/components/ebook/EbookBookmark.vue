@@ -74,16 +74,16 @@ export default {
     }
   },
   methods: {
-    addBookmark () {
+    addBookmark () { // 利用cfi位置信息保存书签
       this.bookmark = getBookmark(this.fileName)
       if (!this.bookmark) {
         this.bookmark = []
       }
       const currentLocation = this.currentBook.rendition.currentLocation()
-      const cfibase = currentLocation.start.cfi.replace(/!.*/, '')
+      const cfibase = currentLocation.start.cfi.replace(/!.*/, '') // cfi前半部分
       const cfistart = currentLocation.start.cfi.replace(/.*!/, '').replace(/\)$/, '')
       const cfiend = currentLocation.end.cfi.replace(/.*!/, '').replace(/\)$/, '')
-      const cfirange = `${cfibase}!,${cfistart},${cfiend})`
+      const cfirange = `${cfibase}!,${cfistart},${cfiend})` // 拼接
       this.currentBook.getRange(cfirange).then(range => {
         const text = range.toString().replace(/\s\s/g, '')
         this.bookmark.push({
