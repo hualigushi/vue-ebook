@@ -1,6 +1,6 @@
 import { mapGetters, mapActions } from 'vuex'
 import { FONT_SIZE_LIST, FONT_FAMILY, themeList, getReadTimeByMinute, showBookDetail, addCss, removeAllCss } from './book'
-import * as Storage from './localStorage'
+import { getBookmark, saveLocation } from './localStorage'
 
 export const ebookMixin = {
   computed: {
@@ -143,24 +143,6 @@ export const ebookMixin = {
       this.currentBook.rendition.themes.fontSize(this.defaultFontSize)
       this.setGlobalTheme(this.defaultTheme)
     },
-    setFontSize (fontSize) {
-      this.setDefaultFontSize(fontSize).then(() => {
-        this.switchTheme()
-        Storage.saveFontSize(this.fileName, fontSize)
-      })
-    },
-    setTheme (theme) {
-      this.setDefaultTheme(theme).then(() => {
-        this.switchTheme()
-        Storage.saveTheme(this.fileName, theme)
-      })
-    },
-    setFontFamily (font) {
-      this.setDefaultFontFamily(font).then(() => {
-        this.switchTheme()
-        Storage.saveFontFamily(this.fileName, font)
-      })
-    },
     displaySection (cb) {
       const section = this.currentBook.section(this.section)
       if (section && section.href) {
@@ -171,56 +153,35 @@ export const ebookMixin = {
       }
     },
     displayProgress () {
-      console.log(this.progress)
       const cfi = this.currentBook.locations.cfiFromPercentage(this.progress / 100)
       this.currentBook.rendition.display(cfi).then(() => {
         this.refreshLocation()
       })
     },
-    display (target, highlight = false, cb) {
+    display (target, cb) {
       if (target) {
         this.currentBook.rendition.display(target).then(() => {
-          if (highlight) {
-            if (target.startsWith('epubcfi')) {
-              this.currentBook.getRange(target).then(range => {
-                this.currentBook.rendition.annotations.highlight(target, {}, (e) => {
-                })
-              })
-            }
-          }
           this.refreshLocation()
-          if (cb) {
-            cb()
-          }
+          if (cb) cb()
         })
       } else {
         this.currentBook.rendition.display().then(() => {
           this.refreshLocation()
-          if (cb) {
-            cb()
-          }
+          if (cb) cb()
         })
       }
     },
     refreshLocation () {
       const currentLocation = this.currentBook.rendition.currentLocation()
-      if (currentLocation.start && currentLocation.start.index) {
-        this.setSection(currentLocation.start.index)
-        const progress = this.currentBook.locations.percentageFromCfi(currentLocation.start.cfi)
+      if (currentLocation && currentLocation.start) {
+        const startCfi = currentLocation.start.cfi
+        const progress = this.currentBook.locations.percentageFromCfi(startCfi)
         this.setProgress(Math.floor(progress * 100))
-        if (this.pagelist) {
-          if (currentLocation.start.location <= 0) {
-            this.setPaginate('')
-          } else {
-            this.setPaginate(currentLocation.start.location + ' / ' + this.pagelist.length)
-          }
-        } else {
-          this.setPaginate('')
-        }
-        const cfistart = currentLocation.start.cfi
-        const bookmark = Storage.getBookmark(this.fileName)
+        this.setSection(currentLocation.start.index)
+        saveLocation(this.fileName, startCfi)
+        const bookmark = getBookmark(this.fileName)
         if (bookmark) {
-          if (bookmark.some(item => item.cfi === cfistart)) {
+          if (bookmark.some(item => item.cfi === startCfi)) {
             this.setIsBookmark(true)
           } else {
             this.setIsBookmark(false)
@@ -228,7 +189,17 @@ export const ebookMixin = {
         } else {
           this.setIsBookmark(false)
         }
-        Storage.saveLocation(this.fileName, cfistart)
+        if (this.pagelist) {
+          const totalPage = this.pagelist.length
+          const currentPage = currentLocation.start.location
+          if (currentPage && currentPage > 0) {
+            this.setPaginate(currentPage + ' / ' + totalPage)
+          } else {
+            this.setPaginate('')
+          }
+        } else {
+          this.setPaginate('')
+        }
       }
     },
     getReadTime () {

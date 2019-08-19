@@ -14,7 +14,7 @@ import EbookTitle from '../../components/ebook/EbookTitle'
 import EbookMenu from '../../components/ebook/EbookMenu'
 import EbookBookmark from '../../components/ebook/EbookBookmark'
 import EbookHeader from '../../components/ebook/EbookHeader'
-import EbookFooter from '../../components/ebook.EbookFooter'
+import EbookFooter from '../../components/ebook/EbookFooter'
 import { getReadTime, saveReadTime } from '../../utils/localStorage'
 import { setInterval, clearInterval, setTimeout } from 'timers'
 import { ebookMixin } from '../../utils/mixin'
@@ -26,7 +26,7 @@ export default {
     EbookMenu,
     EbookBookmark,
     EbookHeader,
-     EbookFooter
+    EbookFooter
   },
   watch: {
     offsetY (v) { // 监听下拉偏移量，移动阅读器页面

@@ -70,8 +70,11 @@ export default {
   },
   methods: {
     displayContent (target, highlight = false) {
-      this.display(target, highlight, () => {
+      this.display(target, () => {
         this.hideTitleAndMenu()
+        if (highlight) {
+          this.currentBook.rendition.annotations.highlight(target)
+        }
       })
     },
     contentItemStyle (item) {
