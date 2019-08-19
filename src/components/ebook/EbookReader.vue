@@ -107,7 +107,8 @@ export default {
       this.rendition = this.book.renderTo('read', {
         width: innerWidth,
         height: innerHeight,
-        method: 'default'
+        method: 'default' // 默认翻页模式
+        //flow: 'scolled' epubjs支持滚动阅读模式
       })
       const location = getLocation(this.fileName)
       this.display(location, false, () => {
