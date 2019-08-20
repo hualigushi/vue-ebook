@@ -1,5 +1,6 @@
 <template>
-<div class="search-bar">
+<div class="search-bar" :class="{'hide-title':!titleVisible}">
+ <transition name="title-move">
    <div class="search-bar-title-warpper" v-show="titleVisible">
       <div class="title-icon-back-wrapper">
         <span class="icon-back icon"></span>
@@ -11,6 +12,7 @@
         <span class="icon-shake icon"></span>
       </div>
    </div>
+  </transition>
    <div class="search-bar-input-wrapper">
      <div class="search-bar-input">
        <span class="icon-search icon">
@@ -20,22 +22,44 @@
 </div>
 <template>
 <script>
+import {storeHomeMixin} from '../../utils/mixin'
 export default {
+minxins: [storeHomeMinxin],
   data () {
     return {
       searchText: '',
       titleVisible: true
     }
   },
-  
+  watch: {
+    offsetY(offsetY){
+       if (offsetY > 0) { // 向下滚动页面
+             this.hideTitle()
+       } else {
+         this.showTitle()
+       }
+    }
+  },
+  methods: {
+    hideTitle() {
+      this.titleVisible = false
+    },
+    showTitle() {
+       this.titleVisible = true
+    }
+  }
 }
 </script>
 <style lang="scss" rel="stylesheet/scss" scoped>
 @import "../../assets/styles/global";
  .search-bar {
  position:relative;
+ z-index:100;
  width:100%;
  height: px2rem(94);
+ &.hide-title {
+ height: px2rem(52);
+ }
    .search-bar-title-warpper {
      position:absolute;
      top:0;
