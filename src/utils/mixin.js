@@ -1,13 +1,89 @@
 import { mapGetters, mapActions } from 'vuex'
-import { FONT_SIZE_LIST, FONT_FAMILY, themeList, getReadTimeByMinute, showBookDetail, addCss, removeAllCss } from './book'
-import { getBookmark, saveLocation } from './localStorage'
+import { themeList, addCss, removeAllCss, getReadTimeByMinute } from './book'
+import { getBookmark, saveLocation, getBookShelf, saveBookShelf } from './localStorage'
+import { gotoBookDetail, appendAddToShelf, computeId, removeAddFromShelf } from './store'
+import { shelf } from '../api/store'
+
+export const storeShelfMixin = {
+  computed: {
+    ...mapGetters([
+      'isEditMode',
+      'shelfList',
+      'shelfSelected',
+      'shelfTitleVisible',
+      'offsetY',
+      'shelfCategory',
+      'currentType'
+    ])
+  },
+  methods: {
+    ...mapActions([
+      'setIsEditMode',
+      'setShelfList',
+      'setShelfSelected',
+      'setShelfTitleVisible',
+      'setOffsetY',
+      'setShelfCategory',
+      'setCurrentType'
+    ]),
+    showBookDetail (book) {
+      gotoBookDetail(this, book)
+    },
+    getCategoryList (title) {
+      this.getShelfList().then(() => {
+        const categoryList = this.shelfList.filter(book => book.type === 2 && book.title === title)[0]
+        this.setShelfCategory(categoryList)
+      })
+    },
+    getShelfList () {
+      let shelfList = getBookShelf()
+      if (!shelfList) {
+        shelf().then(response => {
+          if (response.status === 200 && response.data && response.data.bookList) {
+            shelfList = appendAddToShelf(response.data.bookList)
+            saveBookShelf(shelfList)
+            return this.setShelfList(shelfList)
+          }
+        })
+      } else {
+        return this.setShelfList(shelfList)
+      }
+    },
+    moveOutOfGroup (f) {
+      this.setShelfList(this.shelfList.map(book => {
+        if (book.type === 2 && book.itemList) {
+          book.itemList = book.itemList.filter(subBook => !subBook.selected)
+        }
+        return book
+      })).then(() => {
+        const list = computeId(appendAddToShelf([].concat(
+          removeAddFromShelf(this.shelfList), ...this.shelfSelected)))
+        this.setShelfList(list).then(() => {
+          this.simpleToast(this.$t('shelf.moveBookOutSuccess'))
+          if (f) f()
+        })
+      })
+    }
+  }
+}
 
 export const storeHomeMixin = {
   computed: {
-    ...mapGetters(['offsetY'])
+    ...mapGetters([
+      'offsetY',
+      'hotSearchOffsetY',
+      'flapCardVisible'
+    ])
   },
   methods: {
-    ...mapActions(['setOffsetY'])
+    ...mapActions([
+      'setOffsetY',
+      'setHotSearchOffsetY',
+      'setFlapCardVisible'
+    ]),
+    showBookDetail (book) {
+      gotoBookDetail(this, book)
+    }
   }
 }
 
@@ -32,27 +108,13 @@ export const ebookMixin = {
       'paginate',
       'pagelist',
       'offsetY',
-      'isBookmark',
-      'speakingIconBottom'
+      'isBookmark'
     ]),
     themeList () {
       return themeList(this)
     },
     getSectionName () {
-      // if (this.section) {
-      //   const section = this.currentBook.section(this.section)
-      //   if (section && section.href && this.currentBook && this.currentBook.navigation) {
-      //     return this.currentBook.navigation.get(section.href).label
-      //   }
-      // }
-
       return this.section ? this.navigation[this.section].label : ''
-    }
-  },
-  data () {
-    return {
-      fontSizeList: FONT_SIZE_LIST,
-      fontFamily: FONT_FAMILY
     }
   },
   methods: {
@@ -75,8 +137,7 @@ export const ebookMixin = {
       'setPaginate',
       'setPagelist',
       'setOffsetY',
-      'setIsBookmark',
-      'setSpeakingIconBottom'
+      'setIsBookmark'
     ]),
     initGlobalStyle () {
       removeAllCss()
@@ -96,88 +157,6 @@ export const ebookMixin = {
         default:
           addCss(`${process.env.VUE_APP_RES_URL}/theme/theme_default.css`)
           break
-      }
-    },
-    showFontFamilySetting () {
-      this.setFontFamilyVisible(true)
-    },
-    showSetting (key) {
-      this.setSettingVisible(key)
-    },
-    toggleMenuVisible () {
-      if (this.menuVisible) {
-        this.setSettingVisible(-1)
-        this.setFontFamilyVisible(false)
-      }
-      this.setMenuVisible(!this.menuVisible)
-    },
-    hideFontFamilySetting () {
-      this.setFontFamilyVisible(false)
-    },
-    setGlobalTheme (theme) {
-      removeAllCss()
-      switch (theme) {
-        case 'Default':
-          addCss(`${process.env.VUE_APP_RES_URL}/theme/theme_default.css`)
-          break
-        case 'Eye':
-          addCss(`${process.env.VUE_APP_RES_URL}/theme/theme_eye.css`)
-          break
-        case 'Gold':
-          addCss(`${process.env.VUE_APP_RES_URL}/theme/theme_gold.css`)
-          break
-        case 'Night':
-          addCss(`${process.env.VUE_APP_RES_URL}/theme/theme_night.css`)
-          break
-        default:
-          this.setDefaultTheme('Default')
-          addCss(`${process.env.VUE_APP_RES_URL}/theme/theme_default.css`)
-          break
-      }
-    },
-    registerTheme () {
-      this.themeList.forEach(theme => {
-        this.currentBook.rendition.themes.register(theme.name, theme.style)
-      })
-    },
-    switchTheme () {
-      const rules = this.themeList.filter(theme => theme.name === this.defaultTheme)[0]
-      if (this.defaultFontFamily && this.defaultFontFamily !== 'Default') {
-        rules.style.body['font-family'] = `${this.defaultFontFamily}!important`
-      } else {
-        rules.style.body['font-family'] = `Times New Roman!important`
-      }
-      this.registerTheme()
-      this.currentBook.rendition.themes.select(this.defaultTheme)
-      this.currentBook.rendition.themes.fontSize(this.defaultFontSize)
-      this.setGlobalTheme(this.defaultTheme)
-    },
-    displaySection (cb) {
-      const section = this.currentBook.section(this.section)
-      if (section && section.href) {
-        this.currentBook.rendition.display(section.href).then(() => {
-          this.refreshLocation()
-          if (cb) cb()
-        })
-      }
-    },
-    displayProgress () {
-      const cfi = this.currentBook.locations.cfiFromPercentage(this.progress / 100)
-      this.currentBook.rendition.display(cfi).then(() => {
-        this.refreshLocation()
-      })
-    },
-    display (target, cb) {
-      if (target) {
-        this.currentBook.rendition.display(target).then(() => {
-          this.refreshLocation()
-          if (cb) cb()
-        })
-      } else {
-        this.currentBook.rendition.display().then(() => {
-          this.refreshLocation()
-          if (cb) cb()
-        })
       }
     },
     refreshLocation () {
@@ -211,21 +190,29 @@ export const ebookMixin = {
         }
       }
     },
-    getReadTime () {
-      return this.$t('book.haveRead').replace('$1', getReadTimeByMinute(this.fileName))
+    display (target, cb) {
+      if (target) {
+        this.currentBook.rendition.display(target).then(() => {
+          this.refreshLocation()
+          if (cb) cb()
+        })
+      } else {
+        this.currentBook.rendition.display().then(() => {
+          this.refreshLocation()
+          if (cb) cb()
+        })
+      }
     },
     hideTitleAndMenu () {
       this.setMenuVisible(false)
       this.setSettingVisible(-1)
       this.setFontFamilyVisible(false)
-    }
-  }
-}
-
-export const ebookHome = {
-  methods: {
-    showBookDetail (item) {
-      showBookDetail(this, item)
+    },
+    getReadTime () {
+      return this.$t('book.haveRead').replace('$1', getReadTimeByMinute(this.fileName))
+    },
+    showFontFamilySetting () {
+      this.setFontFamilyVisible(true)
     }
   }
 }

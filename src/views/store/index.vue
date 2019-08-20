@@ -1,7 +1,7 @@
 <template>
  <div class="store">
   <router-view></router-view>
- <div>
+ </div>
 </template>
 <script>
 export default {
@@ -13,5 +13,6 @@ export default {
 .store{
   width:100%;
   height:100%;
+  background: white;
 }
 </style>
