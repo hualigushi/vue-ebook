@@ -1,10 +1,7 @@
 <template>
-<div class="search-bar" :class="{'hide-title':!titleVisible}">
+<div class="search-bar" :class="{'hide-title':!titleVisible}, 'hide-shadow':!shadowVisible">
  <transition name="title-move">
    <div class="search-bar-title-warpper" v-show="titleVisible">
-      <div class="title-icon-back-wrapper">
-        <span class="icon-back icon"></span>
-      </div>
       <div class="title-text-wrapper">
         <span class="title-text title">{{$t('home.title')}}</span>
       </div>
@@ -13,7 +10,11 @@
       </div>
    </div>
   </transition>
-   <div class="search-bar-input-wrapper">
+<div class="title-icon-back-wrapper" :class="{'hide-title':!titleVisible}">
+        <span class="icon-back icon"></span>
+      </div>
+   <div class="search-bar-input-wrapper" :class="{'hide-title':!titleVisible}">
+     <div class="search-bar-blank" :class="{'hide-title':!titleVisible}"></div>
      <div class="search-bar-input">
        <span class="icon-search icon">
        <input class="input" type="text" :placeholder="$t('home.hint')" v-model="searchText">
@@ -28,15 +29,18 @@ minxins: [storeHomeMinxin],
   data () {
     return {
       searchText: '',
-      titleVisible: true
+      titleVisible: true,
+      shadowVisible: false
     }
   },
   watch: {
     offsetY(offsetY){
        if (offsetY > 0) { // 向下滚动页面
              this.hideTitle()
+             this.showShadow()
        } else {
          this.showTitle()
+         this.hideShadow()
        }
     }
   },
@@ -46,6 +50,12 @@ minxins: [storeHomeMinxin],
     },
     showTitle() {
        this.titleVisible = true
+    },
+    hideShadow() {
+      this.shadowVisible = false
+    }
+    showShadow() {
+       this.shadowVisible = true
     }
   }
 }
@@ -57,8 +67,12 @@ minxins: [storeHomeMinxin],
  z-index:100;
  width:100%;
  height: px2rem(94);
+ box-shadow: 0 px2rem(2) px2rem(2) 0 rgba(0,0,0,.1);
  &.hide-title {
  height: px2rem(52);
+ }
+ &.hide-shadow{
+   box-shadow: none;
  }
    .search-bar-title-warpper {
      position:absolute;
@@ -66,14 +80,6 @@ minxins: [storeHomeMinxin],
      left:0;
      width:100%；
      height:px2rem(42);
-     .title-icon-back-wrapper {
-        position:absolute;
-        left:px2rem(15);
-        top:0;
-        height:px2rem(42);
-        @include center;
-        
-     }
      .title-text-wrapper {
        width:100%;
        height:px2rem(42);
@@ -89,13 +95,42 @@ minxins: [storeHomeMinxin],
         
      }
    }
+    .title-icon-back-wrapper {
+        position:absolute;
+        left:px2rem(15);
+        top:0;
+        height:px2rem(42);
+        transition: height $animationTime $animationType;
+        @include center;
+        &.hide-title{
+           height: px2rem(52);
+        }
+     }
    .search-bar-input-wrapper {
+     position:absolute;
+     left:0;
+     top:px2rem(42);
+     display:flex;
      width:100%;
      height:px2rem(52);
      padding:px2rem(10);
      box-sizing: border-box;
+     transition: top $animationTime $animationType;
+     &.hide-title{
+      top:0;
+     }
+     .search-bar-blank{
+       flex:0 0 0;
+       width:0;
+       transition: all $animationTime $animationType;
+       &.hide-title{
+         flex: 0 0 px2rem(31);
+         width: px2rem(31);
+       }
+     }
      .search-bar-input{
         width:100%;
+        flex:1;
         background-color:#f4f4f4;
         boder-radius:px2rem(20);
         padding: px2rem(5) px2rem(15);
