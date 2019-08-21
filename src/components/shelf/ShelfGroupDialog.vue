@@ -6,11 +6,14 @@
            v-for="(item, index) in categoryList"
            :key="index"
            @click="onGroupClick(item)"
-           v-if="(item.edit === 2 && isInGroup) || item.edit !== 2 || !item.edit">
-        <div class="dialog-list-item-text">{{item.title}}</div>
+           >
+           <div v-if="(item.edit === 2 && isInGroup) || item.edit !== 2 || !item.edit">
+              <div class="dialog-list-item-text">{{item.title}}</div>
         <div class="dialog-list-icon-wrapper" v-if="isInGroup && shelfCategory.id === item.id">
           <span class="icon-check"></span>
         </div>
+           </div>
+
       </div>
     </div>
     <div class="dialog-new-group-wrapper" v-else>

@@ -1,8 +1,8 @@
 <template>
   <transition name="slide-down">
     <div class="title-wrapper" v-show="menuVisible">
-      <div class="left" @click="back">
-        <span class="icon-back"></span>
+      <div class="left">
+        <span class="icon-back" @click="back"></span>
       </div>
       <div class="right">
         <div class="icon-wrapper">
@@ -24,7 +24,7 @@ export default {
   mixins: [ebookMixin],
   methods: {
     back () {
-
+      this.$router.go(-1)
     }
   }
 }
@@ -35,7 +35,7 @@ export default {
     position: absolute;
     top: 0;
     left: 0;
-    z-index: 101;
+    z-index: 210;
     display: flex;
     width: 100%;
     height: px2rem(48);
