@@ -54,14 +54,14 @@ export default {
     position: absolute;
     bottom:0;
     left:0;
-    z-index: 350;
+    z-index: 300;
     width: 100%;
     font-size: 0;
     background: white;
     box-shadow: 0 px2rem(-4) px2rem(6) rgbs(0,0,0,.1);
    .ebook-popup-title {
        position: relative;
-       padding:px2rem(15);
+       padding: px2rem(15);
        box-sizing: border-box;
        border-bottom: px2rem(1) solid #b8b9bb;
        text-align: center;
@@ -97,13 +97,11 @@ export default {
             }
          }
          .ebook-popup-item-check {
-            flex:1;
+            flex: 1;
             text-align: right;
-            .icon-check {
-              font-size: px2rem(14);
-              font-weight: bold;
-              color: #346cb9;
-            }
+            font-size: px2rem(14);
+            font-weight: bold;
+            color: #346cb9;
          }
       }
     }

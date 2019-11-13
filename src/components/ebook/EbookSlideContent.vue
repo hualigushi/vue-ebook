@@ -128,14 +128,11 @@ export default {
       box-sizing: border-box;
       .slide-contents-search-input-wrapper {
         flex: 1;
-        border-radius: px2rem(3);
         @include center;
         .slide-contents-search-icon {
           flex: 0 0 px2rem(28);
+          font-size: px2rem(12);
           @include center;
-          .icon-search {
-            font-size: px2rem(12);
-          }
         }
         .slide-contents-search-input {
           flex: 1;
@@ -171,22 +168,20 @@ export default {
       }
       .slide-contents-book-info-wrapper {
         flex: 1;
-        @include columnLeft;
+        padding: 0 px2rem(10);
+        box-sizing: border-box;
         .slide-contents-book-title {
+          // width: px2rem(153.75);
           font-size: px2rem(14);
           line-height: px2rem(16);
-          padding: 0 px2rem(10);
-          box-sizing: border-box;
           @include left;
           .slide-contents-book-title-text {
-            @include ellipsis2(1);
+            @include ellipsis2(3);
           }
         }
         .slide-contents-book-author {
           font-size: px2rem(12);
           line-height: px2rem(14);
-          padding: 0 px2rem(10);
-          box-sizing: border-box;
           margin-top: px2rem(5);
           @include left;
           .slide-contents-book-author-text {
@@ -195,22 +190,21 @@ export default {
         }
       }
       .slide-contents-book-progress-wrapper {
-        flex: 0 0 px2rem(70);
-        @include columnLeft;
+       flex: 0 0 px2rem(70);
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: flex-start;
         .slide-contents-book-progress {
           .progress {
             font-size: px2rem(14);
-            line-height: px2rem(16);
           }
           .progress-text {
             font-size: px2rem(12);
-            line-height: px2rem(14);
-            margin-left: px2rem(2);
           }
         }
         .slide-contents-book-time {
           font-size: px2rem(12);
-          line-height: px2rem(14);
           margin-top: px2rem(5);
         }
       }
@@ -236,6 +230,7 @@ export default {
       }
     }
     .slide-search-list {
+     width: 100%;
       padding: 0 px2rem(15);
       box-sizing: border-box;
       .slide-search-item {

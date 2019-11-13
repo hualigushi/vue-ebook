@@ -1,4 +1,4 @@
-<template>
+ <template>
     <transition name="slide-up">
         <div class="setting-wrapper" v-show="menuVisible && settingVisible === 1">
         <div class="setting-theme">

@@ -2,12 +2,12 @@
   <div class="ebook-reader">
     <div id="read">
     <div class="ebook-reader-mask"
-    @click="onMaskClick"
-    @touchmove="move"
-     @touchend="moveEnd"
-     @mousedown.left="onMouseEnter"
-     @mousemove.left="onMouseMove"
-     @mouseup.left="onMouseEnd"></div>
+      @click="onMaskClick"
+      @touchmove="move"
+      @touchend="moveEnd"
+      @mousedown.left="onMouseEnter"
+      @mousemove.left="onMouseMove"
+      @mouseup.left="onMouseEnd"></div>
     </div>
   </div>
 </template>
@@ -131,7 +131,7 @@ export default {
       }
       this.setDefaultTheme(defaultTheme)
       this.themeList.forEach(theme => {
-        this.rendition.themes.register(theme.name, theme.style)
+        this.rendition.themes.register(theme.name, theme.style) // 注册
       })
       this.rendition.themes.select(defaultTheme)
     },
@@ -154,7 +154,7 @@ export default {
       }
     },
     initRedition () {
-      this.rendition = this.book.renderTo('read', {
+      this.rendition = this.book.renderTo('read', { // 渲染
         width: innerWidth,
         height: innerHeight,
         method: 'default' // 默认翻页模式，不加该属性，微信端无法显示成功
@@ -170,6 +170,7 @@ export default {
       })
       // 阅读器渲染完成可以获取资源文件时，注册方法
       this.rendition.hooks.content.register(contents => {
+        // 向iframe中注入字体文件，从而实现字体切换
         Promise.all([
           contents.addStylesheet(`${process.env.VUE_APP_RES_URL}/fonts/daysOne.css`), // 手动添加样式文件,在.env.development  /  .env.production中配置路径
           contents.addStylesheet(`${process.env.VUE_APP_RES_URL}/fonts/cabin.css`),
@@ -237,17 +238,13 @@ export default {
         this.setNavigation(navItem)
       })
     },
-    initEpub () {
-      // 通过nginx服务器来获取电子书路径
-      const url = `${process.env.VUE_APP_RES_URL}/epub/` + this.fileName + '.epub'
-      console.log(url)
-      this.book = new Epub(url)
-      console.log(this.book)
+    initEpub (url) {
+      this.book = new Epub(url) // 实例化
       this.setCurrentBook(this.book)
-      this.initRedition()
+      this.initRendition()
       // this.initGesture()
       this.parseBook()
-      this.book.ready.then(() => {
+      this.book.ready.then(() => { // 分页
         return this.book.locations.generate(750 * (window.innerWidth / 375) * (getFontSize(this.fileName) / 16))
       }).then(locations => {
         // 分页,计算每一章节有多少页
@@ -282,11 +279,24 @@ export default {
       })
     }
   },
-  mounted () {
-    this.setFileName(this.$route.params.fileName.split('|').join('/')).then(() => {
-      this.initEpub()
-    })
-  }
+  mounted() {
+    // 原始路径为   分类名|电子书名称， 处理路径为nginx路径
+      const books = this.$route.params.fileName.split('|')
+      const fileName = books[1]
+      getLocalForage(fileName, (err, blob) => {
+        if (!err && blob) {
+          this.setFileName(books.join('/')).then(() => {
+            this.initEpub(blob)
+          })
+        } else {
+          this.setFileName(books.join('/')).then(() => {
+             // 通过nginx服务器来获取电子书路径
+            const url = process.env.VUE_APP_EPUB_URL + '/' + this.fileName + '.epub'
+            this.initEpub(url)
+          })
+        }
+      })
+    }
 }
 </script>
 <style lang="scss" rel="stylesheet/scss" scoped>

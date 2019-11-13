@@ -192,7 +192,7 @@ export const ebookMixin = {
     },
     display (target, cb) {
       if (target) {
-        this.currentBook.rendition.display(target).then(() => {
+        this.currentBook.rendition.display(target).then(() => { // 展示
           this.refreshLocation()
           if (cb) cb()
         })

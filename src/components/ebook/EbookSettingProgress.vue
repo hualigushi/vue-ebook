@@ -7,8 +7,8 @@
           <span class="icon-forward"></span>
         </div>
         <div class="progress-wrapper">
-          <div class="progress-icon-wrapper">
-            <span class="icon-back" @click="prevSection()"></span>
+          <div class="progress-icon-wrapper" @click="prevSection()">
+            <span class="icon-back"></span>
           </div>
           <input class="progress" type="range"
                  max="100"
@@ -31,63 +31,56 @@
     </div>
   </transition>
 </template>
-<script type="text/ecmascript-6">
+<script>
 import { ebookMixin } from '../../utils/mixin'
-import { saveProgress } from '../../utils/localStorage'
 
 export default {
   mixins: [ebookMixin],
-  data () {
-    return {
-      isProgressLoading: false
-    }
-  },
   methods: {
-    prevSection () {
-      if (this.section > 0 && !this.isProgressLoading) {
-        this.isProgressLoading = true
-        this.setSection(this.section - 1).then(() => {
-          this.displaySection(() => {
-            this.updateProgressBg()
-            this.isProgressLoading = false
-          })
-        })
-      }
-    },
-    nextSection () {
-      if (this.currentBook.spine.length - 1 > this.section && !this.isProgressLoading) {
-        this.isProgressLoading = true
-        this.setSection(this.section + 1).then(() => {
-          this.displaySection(() => {
-            this.updateProgressBg()
-            this.isProgressLoading = false
-          })
-        })
-      }
+    onProgressChange (progress) {
+      this.setProgress(progress).then(() => {
+        this.displayProgress()
+        this.updateProgressBg()
+      })
     },
     onProgressInput (progress) {
       this.setProgress(progress).then(() => {
         this.updateProgressBg()
       })
     },
-    onProgressChange (progress) {
-      this.setProgress(progress).then(() => {
-        this.updateProgressBg()
-        this.displayProgress()
-      })
-      saveProgress(this.fileName, progress)
+    displayProgress () {
+      const cfi = this.currentBook.locations.cfiFromPercentage(this.progress / 100)
+      this.display(cfi)
     },
-    // 已阅读部分进度条颜色修改
     updateProgressBg () {
       this.$refs.progress.style.backgroundSize = `${this.progress}% 100%`
+    },
+    prevSection () {
+      if (this.section > 0 && this.bookAvailable) {
+        this.setSection(this.section - 1).then(() => {
+          this.displaySection()
+        })
+      }
+    },
+    nextSection () {
+      if (this.section < this.currentBook.spine.length - 1 && this.bookAvailable) {
+        this.setSection(this.section + 1).then(() => {
+          this.displaySection()
+        })
+      }
+    },
+    displaySection () {
+      const sectionInfo = this.currentBook.section(this.section)
+      if (sectionInfo && sectionInfo.href) {
+        this.display(sectionInfo.href)
+      }
     }
   },
   updated () {
-    this.$refs.progress.style.backgroundSize = `${this.progress}% 100%`
+    this.updateProgressBg()
   }
 }
 </script>
-
 <style lang="scss" rel="stylesheet/scss" scoped>
   @import "../../assets/styles/global";
 
@@ -95,7 +88,7 @@ export default {
     position: absolute;
     bottom: px2rem(48);
     left: 0;
-    z-index: 190;
+    z-index: 160;
     width: 100%;
     height: px2rem(90);
     background-color: white;
@@ -110,8 +103,8 @@ export default {
         top: 0;
         width: 100%;
         height: px2rem(40);
-        @include center;
         font-size: px2rem(12);
+        @include center;
       }
       .progress-wrapper {
         width: 100%;
@@ -119,13 +112,13 @@ export default {
         @include center;
         padding: 0 px2rem(15);
         box-sizing: border-box;
+        .progress-icon-wrapper {
+          font-size: px2rem(20);
+        }
         .progress {
-          flex: 1;
           width: 100%;
           -webkit-appearance: none;
           height: px2rem(2);
-          background: -webkit-linear-gradient(#5d6268, #5d6268) no-repeat, #b4b5b7;
-          background-size: 0 100%;
           margin: 0 px2rem(10);
           &:focus {
             outline: none;
@@ -137,30 +130,22 @@ export default {
             border-radius: 50%;
             background: #ceced0;
             box-shadow: 0 px2rem(4) px2rem(6) 0 rgba(0, 0, 0, .15);
-            border: none;
+            border: px2rem(1) solid #ddd;
           }
-        }
-        .progress-icon-wrapper {
-          flex: 0 0 px2rem(22);
-          font-size: px2rem(22);
-          @include center;
         }
       }
       .text-wrapper {
         position: absolute;
         left: 0;
-        bottom: px2rem(5);
+        bottom: px2rem(10);
         width: 100%;
+        color: #333;
         font-size: px2rem(12);
-        text-align: center;
         padding: 0 px2rem(15);
         box-sizing: border-box;
         @include center;
         .progress-section-text {
-          line-height: px2rem(15);
           @include ellipsis;
-        }
-        .progress-text {
         }
       }
     }
