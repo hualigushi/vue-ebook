@@ -274,7 +274,6 @@ export default {
           this.currentSectionIndex = currentPage.start.displayed.page
           this.currentSectionTotal = currentPage.start.displayed.total
           const cfi = `epubcfi(${cfibase}!,${cfistart},${cfiend})`
-          // console.log(currentPage, cfi, cfibase, cfistart, cfiend)
           this.book.getRange(cfi).then(range => {
             let text = range.toLocaleString()
             text = text.replace(/\s(2,)/g, '')

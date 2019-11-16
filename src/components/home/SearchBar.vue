@@ -54,7 +54,6 @@ export default {
       }
     },
     hotSearchOffsetY (offsetY) {
-      console.log(offsetY)
       if (offsetY > 0) {
         this.showShadow()
       } else {

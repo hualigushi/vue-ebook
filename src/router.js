@@ -7,7 +7,7 @@ export default new Router({
   routes: [
     {
       path: '/',
-      redirect: '/ebook'
+      redirect: '/store'
     },
     {
       path: '/ebook',

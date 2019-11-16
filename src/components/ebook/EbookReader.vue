@@ -23,6 +23,8 @@ import { getFontSize,
   saveTheme,
   getLocation }
   from '../../utils/localStorage'
+import { getLocalForage } from '../../utils/localForage'
+
 global.ePub = Epub
 export default {
   mixins: [ebookMixin],
@@ -207,18 +209,15 @@ export default {
       // 获取封面图片链接
       this.book.loaded.cover.then(cover => {
         this.book.archive.createUrl(cover).then(url => {
-          console.log(url)
           this.setCover(url)
         })
       })
       // 获取标题和作者
       this.book.loaded.metadata.then(metadata => {
-        console.log(metadata)
         this.setMetadata(metadata)
       })
       // 获取目录
       this.book.loaded.navigation.then(nav => {
-        console.log(nav)
         const navItem = flatten(nav.toc)
         function find (item, v = 0) {
           const parent = navItem.filter(it => it.id === item.parent)[0]
@@ -279,24 +278,24 @@ export default {
       })
     }
   },
-  mounted() {
+  mounted () {
     // 原始路径为   分类名|电子书名称， 处理路径为nginx路径
-      const books = this.$route.params.fileName.split('|')
-      const fileName = books[1]
-      getLocalForage(fileName, (err, blob) => {
-        if (!err && blob) {
-          this.setFileName(books.join('/')).then(() => {
-            this.initEpub(blob)
-          })
-        } else {
-          this.setFileName(books.join('/')).then(() => {
-             // 通过nginx服务器来获取电子书路径
-            const url = process.env.VUE_APP_EPUB_URL + '/' + this.fileName + '.epub'
-            this.initEpub(url)
-          })
-        }
-      })
-    }
+    const books = this.$route.params.fileName.split('|')
+    const fileName = books[1]
+    getLocalForage(fileName, (err, blob) => {
+      if (!err && blob) {
+        this.setFileName(books.join('/')).then(() => {
+          this.initEpub(blob)
+        })
+      } else {
+        this.setFileName(books.join('/')).then(() => {
+          // 通过nginx服务器来获取电子书路径
+          const url = process.env.VUE_APP_EPUB_URL + '/' + this.fileName + '.epub'
+          this.initEpub(url)
+        })
+      }
+    })
+  }
 }
 </script>
 <style lang="scss" rel="stylesheet/scss" scoped>

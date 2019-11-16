@@ -342,7 +342,6 @@ export function removeBookCache (fileName) {
     removeLocalStorage(fileName)
     removeLocalStorage(`${fileName}-info`)
     removeLocalForage(fileName, () => {
-      console.log(`[${fileName}]删除成功...`)
       resolve()
     }, reject)
   })
